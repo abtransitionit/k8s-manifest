@@ -3,7 +3,8 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: creg
+  # aka container image registry 
+  name: cimreg
 
 
 # namespaced resources
