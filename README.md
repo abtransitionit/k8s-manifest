@@ -25,14 +25,3 @@ We welcome contributions! Before participating, please review:
 - **[Contributing Guide](.github/CONTRIBUTING.md)** – How to submit issues, PRs, and more.  
 
 
-----
-
-
-# Release History & Changelog  
-
-Track version updates and changes:  
-- **📦 Latest Release**: `vX.X.X` ([GitHub Releases](#))  
-- **📄 Full Changelog**: See [CHANGELOG.md](CHANGELOG.md) for detailed version history.  
-
----
-
