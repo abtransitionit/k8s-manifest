@@ -1,0 +1,88 @@
+# clustered resources
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  # aka container image registry 
+  name: cimreg
+
+# namespaced resources
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cimreg-pvc
+  namespace: cimreg
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: cimreg
+  namespace: cimreg
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5000
+      targetPort: 5000
+      name: http
+  selector:
+    app: cimreg
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cimreg
+  namespace: cimreg
+spec:
+  replicas: 1
+  # this deployment concerns pod with this label
+  selector:
+    matchLabels:
+      app: cimreg
+  # when creating pod, use this pod definition    
+  template:
+    metadata:
+      labels:
+        app: cimreg
+    spec:
+      containers:
+        - name: cregistry
+          image: registry:2
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+              value: /var/lib/registry
+            - name: REGISTRY_AUTH
+              value: "htpasswd"
+            - name: REGISTRY_AUTH_HTPASSWD_REALM
+              value: "Registry Realm"
+            - name: REGISTRY_AUTH_HTPASSWD_PATH
+              value: "/auth/htpasswd"
+          volumeMounts:
+            - name: registry-data
+              mountPath: /var/lib/registry
+            - name: registry-auth
+              mountPath: /auth
+              readOnly: true
+      volumes:
+        - name: registry-data
+          persistentVolumeClaim:
+            claimName: cimreg-pvc
+        - name: registry-auth
+          secret:
+            secretName: cimreg
+            items:
+              - key: auth
+                path: htpasswd
+

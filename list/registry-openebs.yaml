@@ -1,0 +1,34 @@
+# clustered resources
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  # aka container image registry 
+  name: cimreg
+
+# namespaced resources
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cimreg-sc
+provisioner: openebs.io/local
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain
+parameters:
+  storageType: hostpath
+  path: /var/lib/cimreg-local
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cimreg-pvc
+  namespace: cimreg
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: cimreg-sc
+  resources:
+    requests:
+      storage: 10Gi
