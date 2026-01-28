@@ -13,10 +13,10 @@ kind: StorageClass
 metadata:
   name: cimreg-sc
 provisioner: openebs.io/local
-volumeBindingMode: WaitForFirstConsumer
-reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer # PV is created only when the pod using a PVC (taht uses that SC) is scheduled, not before
+reclaimPolicy: Retain # When PVC is deleted, PV is not deleted; data persists on the node - see https://kubernetes.io/docs/concepts/storage/storage-classes/
 parameters:
-  storageType: hostpath
+  storageType: hostpath # Volumes are hostPath folders 
   path: /var/lib/cimreg-local
 
 ---
