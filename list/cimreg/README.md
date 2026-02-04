@@ -7,6 +7,27 @@
   - the CSI `OpenEBS` hostPath feature
   - the docker `registry:2`
 
+# Manifest
+
+list of the manifests of the application
+
+| id| Yaml| Description|
+|-|-|-|
+| 00| `00-ns.yaml`| `Ns:cimreg`|
+| 01| `01-cm.yaml`| `CM:cimreg-cm` storing the host path variable CIMREG_HOSTPATH|
+| 02| `02-prep.yaml`| `CM:cimreg-ds` create `CIMREG_HOSTPATH` on all nodes|
+| 03| `03-sc.yaml`| `SC:cimreg-sc` (using OpenEBS local hostPath)|
+| 04| `04-pvc.yaml`| `PVC:cimreg-pvc` using `SC:cimreg-sc`|
+| 05| `05-dep.yaml`| `Deploy:cimreg-deploy`|Deployment for Docker registry `registry:3.0.0`|
+
+|step|purpose|comment|
+|-|-|-|
+|2|Persistent Storage|PVC + Storage validation
+|3|Configuration|ConfigMap or Secret(registry config.yml)
+|4|Deployment|Single pod registry
+|5|Service|ClusterIP first
+|6|External Access|Ingress / TLS / auth
+|7|Hardening|S• ecurityContext<br>• NetworkPolicy<br>• Resource limits<br>• PodDisruptionBudget
 
 ## Terminomogy
 |Term|Meaning|
@@ -182,24 +203,6 @@ cimreg/
  ├── 06-security.yaml
 ```
 
-**Phase**
-| id| Yaml| Description|
-|-|-|-|
-| 00| `00-ns.yaml`| `Ns:cimreg`|
-| 01| `01-cm.yaml`| `CM:cimreg-cm` storing the host path variable CIMREG_HOSTPATH|
-| 02| `02-prep.yaml`| `CM:cimreg-ds` create `CIMREG_HOSTPATH` on all nodes|
-| 03| `03-sc.yaml`| `SC:cimreg-sc` (local hostPath)|
-| 04| `04-pvc.yaml`| `PVC:cimreg-pvc` using `SC:cimreg-sc`|
-| 05| `05-dep.yaml`| `Deploy:cimreg-deploy`|Deployment for Docker registry `registry:3.0.0`|
-
-|phase|purpose|comment|
-|-|-|-|
-|2|Persistent Storage|PVC + Storage validation
-|3|Configuration|ConfigMap or Secret(registry config.yml)
-|4|Deployment|Single pod registry
-|5|Service|ClusterIP first
-|6|External Access|Ingress / TLS / auth
-|7|Hardening|S• ecurityContext<br>• NetworkPolicy<br>• Resource limits<br>• PodDisruptionBudget
 
 **Todo**
 | Concern| v1|V2
@@ -219,3 +222,12 @@ cimreg/
 |Namespace|`kubectl get ns cimreg`
 |Storage|`kubectl describe pvc`<br>• `kubectl get events`
 |Deployment|• `kubectl logs`<br>• `kubectl exec`<br>• `kubectl port-forward`
+
+# Check
+**folder exists acroos all node**
+```sh
+kubectl get nodes -o name | xargs -I{} kubectl debug {} -it --image=busybox -- ls -ld /var/lib/cimreg-local
+```
+
+# Question
+- Does this registry need to be accessible by a specific User ID (UID), or is standard root access enough for your setup?
