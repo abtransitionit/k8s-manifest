@@ -1,0 +1,24 @@
+# namespaced resources
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cimreg-test-cm
+  namespace: cimreg
+spec:
+  restartPolicy: Never
+  containers:
+    - name: test
+      image: busybox:1.37
+      env:
+        - name: CIMREG_HOSTPATH
+          valueFrom:
+            configMapKeyRef:
+              name: cimreg-cm
+              key: CIMREG_HOSTPATH
+      command:
+        - /bin/sh
+        - -c
+        - |
+          echo "CIMREG_HOSTPATH=$CIMREG_HOSTPATH"
