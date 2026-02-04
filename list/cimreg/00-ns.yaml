@@ -1,0 +1,20 @@
+# clustered resources
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cimreg
+
+  labels:
+    app.kubernetes.io/component: registry
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/part-of: container-image-registry
+    app.kubernetes.io/managed-by: kubectl
+
+    # operational classification
+    workload-type: stateful
+    exposure: internal
+
+  annotations:
+    description: "Container Image Registry (cimreg)"
+    owner: "mx"
