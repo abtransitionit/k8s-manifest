@@ -16,6 +16,6 @@ volumeBindingMode: WaitForFirstConsumer # PV is created only when the pod using 
 allowVolumeExpansion: true
 parameters:
   storageType: hostpath # Volumes are hostPath folders 
-  path: "{{CIMREG_HOSTPATH}}"
+  path: /var/lib/cimreg-local # base path on the node where hostPath folders are created for each PV
 
 

@@ -3,11 +3,11 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: cimreg-prep
+  name: cimreg-ds
   namespace: cimreg
   labels:
     app.kubernetes.io/name: cimreg
-    app.kubernetes.io/component: prep
+    app.kubernetes.io/component: localpv-provisioner-init
   annotations:
     description: "Prepare host path /var/lib/cimreg-local on all nodes for cimreg registry"
 spec:

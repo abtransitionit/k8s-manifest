@@ -10,4 +10,4 @@ metadata:
   annotations:
     description: "ConfigMap storing the path used for internal container registry volumes"
 data:
-  CIMREG_HOSTPATH: "/var/lib/cimreg-local"
+  CIMREG_HOSTPATH: /var/lib/cimreg-local
