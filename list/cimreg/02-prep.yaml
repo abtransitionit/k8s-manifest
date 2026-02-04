@@ -44,12 +44,12 @@ spec:
             runAsUser: 0
           # --- THE DESTINATION ---
           volumeMounts:
-            - name: host-cimreg-folder. # matches the volume name below
+            - name: host-cimreg-folder # matches the volume name below
               mountPath: /var/lib/cimreg-local # mount point inside the container
       restartPolicy: OnFailure
       # --- THE SOURCE ---
       volumes:
-        - name: host-cimreg-folder. # a uniq name for the volume
+        - name: host-cimreg-folder # a uniq name for the volume
           hostPath:
             path: /var/lib/cimreg-local
             type: DirectoryOrCreate
