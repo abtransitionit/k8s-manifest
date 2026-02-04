@@ -1,0 +1,13 @@
+# namespaced resources
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cimreg-cm
+  namespace: cimreg
+  labels:
+    app.kubernetes.io/name: cimreg
+  annotations:
+    description: "ConfigMap storing the path used for internal container registry volumes"
+data:
+  CIMREG_HOSTPATH: "/var/lib/cimreg-local"

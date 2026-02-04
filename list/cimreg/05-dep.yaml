@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cimreg
+  name: cimreg-deploy
   namespace: cimreg
   labels:
     app.kubernetes.io/name: cimreg
@@ -31,7 +31,7 @@ spec:
           ports:
             - containerPort: 5000
               name: regsvcport                 # 2. The Container Port label (alias for port 5000 for this container)
-          # --- PART 2: THE DESTINATION ---    
+          # --- PART 2: THE DESTINATION ---
           volumeMounts:
             - name: registry-storage        # Matches the volume name below
               mountPath: /var/lib/registry  # mount point inside the container

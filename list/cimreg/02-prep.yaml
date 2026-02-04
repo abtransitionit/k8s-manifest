@@ -1,0 +1,55 @@
+# clustered resources
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cimreg-prep
+  namespace: cimreg
+  labels:
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: prep
+  annotations:
+    description: "Prepare host path /var/lib/cimreg-local on all nodes for cimreg registry"
+spec:
+  # this deployment concerns pod with this label
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cimreg
+      app.kubernetes.io/component: localpv-provisioner-init
+  # when creating pod, use this pod definition    
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cimreg
+        app.kubernetes.io/component: localpv-provisioner-init
+    spec:
+      # run on all nodes
+      hostNetwork: false
+      hostPID: false
+      containers:
+        - name: create-hostdir
+          image: busybox:1.37.0
+          env:
+            - name: CIMREG_HOSTPATH
+              valueFrom:
+                configMapKeyRef:
+                  name: cimreg-cm
+                  key: CIMREG_HOSTPATH
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mkdir -p "$CIMREG_HOSTPATH" && chmod 755 "$CIMREG_HOSTPATH"
+          securityContext:
+            runAsUser: 0
+          # --- THE DESTINATION ---
+          volumeMounts:
+            - name: host-cimreg-folder. # matches the volume name below
+              mountPath: /var/lib/cimreg-local # mount point inside the container
+      restartPolicy: OnFailure
+      # --- THE SOURCE ---
+      volumes:
+        - name: host-cimreg-folder. # a uniq name for the volume
+          hostPath:
+            path: /var/lib/cimreg-local
+            type: DirectoryOrCreate

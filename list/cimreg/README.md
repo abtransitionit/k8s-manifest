@@ -183,9 +183,17 @@ cimreg/
 ```
 
 **Phase**
+| id| Yaml| Description|
+|-|-|-|
+| 00| `00-ns.yaml`| `Ns:cimreg`|
+| 01| `01-cm.yaml`| `CM:cimreg-cm` storing the host path variable CIMREG_HOSTPATH|
+| 02| `02-prep.yaml`| `CM:cimreg-ds` create `CIMREG_HOSTPATH` on all nodes|
+| 03| `03-sc.yaml`| `SC:cimreg-sc` (local hostPath)|
+| 04| `04-pvc.yaml`| `PVC:cimreg-pvc` using `SC:cimreg-sc`|
+| 05| `05-dep.yaml`| `Deploy:cimreg-deploy`|Deployment for Docker registry `registry:3.0.0`|
+
 |phase|purpose|comment|
 |-|-|-|
-|1|Namespace Only|• Safe<br>• Testable<br>• Zero dependency
 |2|Persistent Storage|PVC + Storage validation
 |3|Configuration|ConfigMap or Secret(registry config.yml)
 |4|Deployment|Single pod registry
@@ -194,16 +202,16 @@ cimreg/
 |7|Hardening|S• ecurityContext<br>• NetworkPolicy<br>• Resource limits<br>• PodDisruptionBudget
 
 **Todo**
-| Concern                | v1       |V2
-| ---------------------- | --------------------- |-|
-| Persistence            | PVC required          |
-| Authentication         | - |htpasswd / token auth|
-| TLS                    |      |mandatory in prod
-| Exposure               | ClusterIP          |Ingress
-| Storage backend        | filesystem  |
-| Garbage collection     |  |operational procedure
-| High availability      |         |probably later
-| Image retention policy | optional              |
+| Concern| v1|V2
+| ----------------------| ---------------------|-|
+| Persistence| PVC required|
+| Authentication| -|htpasswd / token auth|
+| TLS||mandatory in prod
+| Exposure| ClusterIP|Ingress
+| Storage backend| filesystem|
+| Garbage collection||operational procedure
+| High availability||probably later
+| Image retention policy| optional|
 
 **Test**
 |||
