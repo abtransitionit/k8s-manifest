@@ -25,6 +25,26 @@ spec:
         app.kubernetes.io/name: cimreg
         app.kubernetes.io/component: registry
     spec:
+      # 1. THE INIT CONTAINER: Runs once per pod startup
+      initContainers:
+        - name: create-hostdir
+          image: busybox:1.37
+          env:
+            - name: CIMREG_HOSTPATH
+              valueFrom:
+                configMapKeyRef:
+                  name: cimreg-cm
+                  key: CIMREG_HOSTPATH
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mkdir -p "$CIMREG_HOSTPATH" && chmod 755 "$CIMREG_HOSTPATH"
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: registry-storage
+              mountPath: /var/lib/registry    
       containers:
         - name: cregistry                   # 1. The Container Identity
           image: registry:3.0.0
