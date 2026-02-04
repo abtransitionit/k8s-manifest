@@ -1,0 +1,19 @@
+# namespaced resources
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cimreg-pvc
+  namespace: cimreg
+  labels:
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: registry
+  annotations:
+    description: "PVC for the internal container registry cimreg"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: cimreg-sc
