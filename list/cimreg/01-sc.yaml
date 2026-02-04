@@ -1,0 +1,16 @@
+# clustered resources
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cimreg-sc
+  labels:
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: registry
+    app.kubernetes.io/managed-by: kubectl
+  annotations:
+    description: "Persistent storage for the internal container registry cimreg"
+provisioner: openebs.io/local
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
