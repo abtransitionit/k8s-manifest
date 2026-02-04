@@ -1,0 +1,42 @@
+# clustered resources
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cimreg
+  namespace: cimreg
+  labels:
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: registry
+  annotations:
+    description: "Docker Container Image Registry deployment using registry:3.0.0 image"
+spec:
+  # ensures 1 pod on 1 node
+  replicas: 1
+  # this deployment concerns pod with this label
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cimreg
+      app.kubernetes.io/component: registry
+  # when creating pod, use this pod definition
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cimreg
+        app.kubernetes.io/component: registry
+    spec:
+      containers:
+        - name: cregistry                   # 1. The Container Identity
+          image: registry:3.0.0
+          ports:
+            - containerPort: 5000
+              name: regsvcport                 # 2. The Container Port label (alias for port 5000)
+          # --- PART 2: THE DESTINATION ---    
+          volumeMounts:
+            - name: registry-storage        # Matches the volume name below
+              mountPath: /var/lib/registry  # mount point inside the container
+      # --- PART 1: THE SOURCE ---
+      volumes:
+        - name: registry-storage  # a uniq name for the volume
+          persistentVolumeClaim:
+            claimName: cimreg-pvc # the PVC (data-source)
