@@ -1,4 +1,4 @@
-# clustered resources
+# namespaced resources
 
 apiVersion: apps/v1
 kind: Deployment
@@ -30,7 +30,7 @@ spec:
           image: registry:3.0.0
           ports:
             - containerPort: 5000
-              name: regsvcport                 # 2. The Container Port label (alias for port 5000)
+              name: regsvcport                 # 2. The Container Port label (alias for port 5000 for this container)
           # --- PART 2: THE DESTINATION ---    
           volumeMounts:
             - name: registry-storage        # Matches the volume name below

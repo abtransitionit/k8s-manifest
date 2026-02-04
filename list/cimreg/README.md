@@ -30,6 +30,12 @@
 |**Access mode**|ReadWriteOnce
 
 
+
+# If pbs with pvc
+```sh
+sudo mkdir -p /var/lib/cimreg-local
+sudo chmod 755 /var/lib/cimreg-local
+```
 # Yaml
 ---
 ```yaml
