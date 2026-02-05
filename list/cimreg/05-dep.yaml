@@ -13,7 +13,7 @@ metadata:
 spec:
   # ensures 1 pod on 1 node
   replicas: 1
-  # this deployment concerns pod with this label
+  # this kind lookup for/apply to these labels on pod
   selector:
     matchLabels:
       app.kubernetes.io/name: cimreg
@@ -21,29 +21,20 @@ spec:
   # when creating pod, use this pod definition
   template:
     metadata:
+      # define these labels on the pod
       labels:
         app.kubernetes.io/name: cimreg
         app.kubernetes.io/component: registry
     spec:
-      # # Pod must be schedule where the provisioner is provisioned
-      # affinity:
-      #   nodeAffinity:
-      #     requiredDuringSchedulingIgnoredDuringExecution:
-      #       nodeSelectorTerms:
-      #       - matchExpressions:
-      #         - key: openebs.io/nodename
-      #           operator: Exists
       containers:  
         - name: cregistry                   # 1. The Container Identity
           image: registry:3.0.0
           env:
-          - name: REGISTRY_TRACING_ENABLED # disable tracing (opentelemetry) - avoid error logs
-            value: "false"
-          - name: OTEL_TRACES_EXPORTER 
+          - name: OTEL_TRACES_EXPORTER # disable tracing (opentelemetry) - avoid error logs
             value: "none"  
           ports:
             - containerPort: 5000
-              name: port-ct-svc                 # 2. The Container Port label (used as a var)
+              name: port-ct-svc                 # 2. The Container Port name (used as a var)
           # --- PART 2: THE DESTINATION ---
           volumeMounts:
             - name: registry-storage        # Matches the volume name below
@@ -70,3 +61,11 @@ spec:
           persistentVolumeClaim:
             claimName: cimreg-pvc # the PVC (data-source)
 
+# # if Pod must be schedule where the provisioner is provisioned
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#       - matchExpressions:
+#         - key: openebs.io/nodename
+#           operator: Exists

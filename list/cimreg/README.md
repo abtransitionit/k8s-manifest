@@ -1,5 +1,6 @@
 
-# Cimreg
+[←]: ../../README.md
+# [←] Cimreg
 ## Definition
 - a contenerized application
 - an in-cluster private container image registry)
@@ -395,3 +396,10 @@ kubectl get nodes -o name | xargs -I{} kubectl debug {} -it --image=busybox -- l
 | T12 | Data       | Backup / restore strategy                  | Planned        | Single-node storage               | Snapshot or rsync-based                          |
 | T13 | Ops        | Garbage collection policy                  | Planned        | Registry growth unmanaged         | Required before long-term use                    |
 | T14 | Lifecycle  | Add PodDisruptionBudget                    | Planned        | Single replica                    | Needed before node maintenance                   |
+| T15 | Observability | Disable OpenTelemetry tracing | Done   | Noise removed, tracing deferred |
+| T16 | Networking    | Internal ClusterIP Service    | Done   | Required for in-cluster access  |
+| T17 | Validation    | Docker push/pull test         | Done   | Confirms full registry pipeline |
+| T18 | Security|add auth (htpasswd)
+| T18 | Security|add TLS
+
+

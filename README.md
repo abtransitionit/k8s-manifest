@@ -1,14 +1,19 @@
+[cimreg]: ./list/cimreg/README.md
+[rancher]: ./list/rancher/README.md
+
 # K8s manifest
 
-This repository defines a set of k8s manifest used by the organization
+This repository defines a set of k8s manifest used, created of forked by the organization
 
 ----
 
 
-# Features  
-This project template includes the following components:  
+# project
+- [cimreg]
+- [rancher]
 
 
+# Todo
 |Component|Description|
 |-|-|
 |Licensing|Predefined open-source license (Apache 2.0) for legal compliance.|
