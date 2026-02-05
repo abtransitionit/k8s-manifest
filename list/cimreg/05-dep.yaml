@@ -43,7 +43,7 @@ spec:
             value: "none"  
           ports:
             - containerPort: 5000
-              name: portCtSvc                 # 2. The Container Port label (alias for port 5000 for this container)
+              name: port-Ct-Svc                 # 2. The Container Port label (used as a var)
           # --- PART 2: THE DESTINATION ---
           volumeMounts:
             - name: registry-storage        # Matches the volume name below
@@ -53,14 +53,14 @@ spec:
           livenessProbe:
             httpGet:
               path: /v2/
-              port: portCtSvc
+              port: port-Ct-Svc
             initialDelaySeconds: 15
             periodSeconds: 20          
           # Checks if the app inside the container is ready for traffic. If this fails, the Service stops sending traffic here.
           readinessProbe:
             httpGet:
               path: /v2/
-              port: portCtSvc
+              port: port-Ct-Svc
             initialDelaySeconds: 5
             periodSeconds: 10
           # --- PROBES END HERE ---                    
