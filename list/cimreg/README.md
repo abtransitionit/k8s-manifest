@@ -7,6 +7,16 @@
   - the CSI `OpenEBS` hostPath feature
   - the docker `registry:2`
 
+# Step
+| Step | File         | Resource     | Purpose               |
+| ---: | ------------ | ------------ | --------------------- |
+|   00 | 00-ns.yaml   | Namespace    | scope                 |
+|   01 | 01-cm.yaml   | ConfigMap    | contract / parameters |
+|   02 | 02-prep.yaml | DaemonSet    | host preparation      |
+|   03 | 03-sc.yaml   | StorageClass | storage abstraction   |
+|   04 | 04-pvc.yaml  | PVC          | data claim            |
+|   05 | 05-dep.yaml  | Deployment   | workload              |
+
 # Manifest
 
 list of the manifests of the application
@@ -146,10 +156,15 @@ when scheduling the node for the pod, the scheduler picks a node:
   - So the scheduler has only one valid choice → the same node.
 # Debug
 **restart the provisioner**
-```
+```sh
+# clear cache, kill old pods and restart new one
 kubectl rollout restart deployment kbe-openebs-localpv-provisioner -n openebs
 ```
-
+**wait end of deplyment**
+```shell
+# wait until Pods are Running and Ready.
+kubectl rollout status deploy/cimreg-deploy -n cimreg
+```
 # Todo
 |step|purpose|comment|
 |-|-|-|
@@ -362,3 +377,21 @@ kubectl get nodes -o name | xargs -I{} kubectl debug {} -it --image=busybox -- l
 
 # Question
 - Does this registry need to be accessible by a specific User ID (UID), or is standard root access enough for your setup?
+
+# Todo
+|  ID | Area       | Item                                       | Current Status | Reason for Deferral               | Notes / When                                     |
+| --: | ---------- | ------------------------------------------ | -------------- | --------------------------------- | ------------------------------------------------ |
+| T01 | Config     | Inject `cimreg-cm` into `cimreg-ds`        | Deferred       | Path is stable for now            | Enables future path refactor without touching DS |
+| T02 | Ops        | Reduce DaemonSet “noise” (exit after prep) | Deferred       | DS must react to node joins       | Acceptable idle pods                             |
+| T03 | Governance | Revisit `kube-system` placement            | Deferred       | Node-wide infra concern           | Possibly move to `cimreg-system` later           |
+| T04 | Runtime    | Add CPU/memory requests & limits           | Deferred       | Early functional phase            | Required before load / multi-tenant              |
+| T05 | Health     | Add readiness & liveness probes            | Deferred       | Registry is single-user for now   | Mandatory before exposing service                |
+| T06 | Scheduling | Add node affinity / pinning                | Deferred       | `WaitForFirstConsumer` sufficient | Needed if node topology becomes constrained      |
+| T07 | Security   | Drop root privileges where possible        | Deferred       | HostPath prep requires root       | Registry container can be non-root later         |
+| T08 | Networking | Add Service (ClusterIP)                    | Planned        | Needed for internal access        | Next logical step                                |
+| T09 | Security   | Add authentication (htpasswd/token)        | Planned        | Registry currently open           | Required before multi-user                       |
+| T10 | Security   | TLS termination                            | Planned        | No ingress yet                    | Mandatory for Docker clients                     |
+| T11 | Policy     | Add NetworkPolicy (Cilium)                 | Planned        | Single workload for now           | Lock down access paths                           |
+| T12 | Data       | Backup / restore strategy                  | Planned        | Single-node storage               | Snapshot or rsync-based                          |
+| T13 | Ops        | Garbage collection policy                  | Planned        | Registry growth unmanaged         | Required before long-term use                    |
+| T14 | Lifecycle  | Add PodDisruptionBudget                    | Planned        | Single replica                    | Needed before node maintenance                   |
