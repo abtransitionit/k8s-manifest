@@ -11,14 +11,47 @@
 
 list of the manifests of the application
 
-| id| Yaml| Description|
-|-|-|-|
-| 00| `00-ns.yaml`| `Ns:cimreg`|
-| 01| `01-cm.yaml`| `CM:cimreg-cm` storing the host path variable CIMREG_HOSTPATH|
-| 02| `02-prep.yaml`| `CM:cimreg-ds` create `CIMREG_HOSTPATH` on all nodes|
-| 03| `03-sc.yaml`| `SC:cimreg-sc` (using OpenEBS local hostPath)|
-| 04| `04-pvc.yaml`| `PVC:cimreg-pvc` using `SC:cimreg-sc`|
-| 05| `05-dep.yaml`| `Deploy:cimreg-deploy`|Deployment for Docker registry `registry:3.0.0`|
+| id| Yaml| kind|Description|
+|-|-|-|-|
+| 00| `00-ns.yaml`| `Ns:cimreg`|ensures the namespace exists
+| 01| `01-cm.yaml`| `CM:cimreg-cm`|ensures the envar exits (CIMREG_HOSTPATH, ...)|
+| 02| `02-prep.yaml`| `CM:cimreg-ds`| ensures folder `CIMREG_HOSTPATH` exists on all nodes|
+| 03| `03-sc.yaml`| `SC:cimreg-sc`|ensures OpenEBS local hostPath exists|
+| 04| `04-pvc.yaml`| `PVC:cimreg-pvc`| uses `SC:cimreg-sc`|
+| 05| `05-dep.yaml`| `Deploy:cimreg-deploy`||Deployment for Docker registry `registry:3.0.0`|
+
+
+## prep.yaml
+
+1. `kubectl apply -f cimreg-ds.yaml`
+1. Kubernetes sees a **DaemonSet**, so it decides:
+    - “I must run one pod on **every node** in the cluster.”
+1. For **each node**, Kubernetes creates **one pod** in the `kube-system` namespace.
+1. Before the pod starts, on **each node’s filesystem**:
+    - Kubernetes checks `/var/lib/cimreg-local`
+    - If it does **not exist**, it **creates the directory on the host**
+1. The pod starts on the node:
+    - It runs an `alpine` container
+    - The container runs as **root**
+    - The container does **nothing active** (`tail -f /dev/null` keeps it alive)
+1. Inside the container:
+    - The host directory `/var/lib/cimreg-local`
+    - is **mounted** into the container at `/mnt/target`
+1. If a **new node joins the cluster**:
+    - Kubernetes notices the new node
+    - The DaemonSet automatically schedules **one new pod on that node**
+    - Kubernetes creates `/var/lib/cimreg-local` on that node
+    - The directory is mounted into the pod at `/mnt/target`
+
+**Result**:
+  - On **every node**, the directory `/var/lib/cimreg-local` exists
+  - That directory is **visible from inside the pod** at `/mnt/target`
+  - The pod just stays running, acting as a **host preparation helper**
+  - 👉 this manifest ensures the directory `/var/lib/cimreg-local` exists on all node (new or existing) of the cluster
+
+
+
+
 
 |step|purpose|comment|
 |-|-|-|

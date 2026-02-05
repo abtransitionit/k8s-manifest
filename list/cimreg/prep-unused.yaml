@@ -42,7 +42,7 @@ spec:
               mkdir -p "$CIMREG_HOSTPATH" && chmod 755 "$CIMREG_HOSTPATH"
           securityContext:
             runAsUser: 0
-            # privileged: true # if selinux/apparmor does notr allow make changes on host FS
+            # privileged: true (or z:) # if selinux/apparmor does notr allow make changes on host FS
           # --- THE DESTINATION ---
           volumeMounts:
             - name: host-cimreg-folder # matches the volume name below

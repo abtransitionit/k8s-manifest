@@ -1,0 +1,42 @@
+# clustered resources
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cimreg-ds
+  namespace: kube-system # this is an admin tool, taht acts on all node so it can be in kube-system, not in cimreg ns
+  labels:
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: localpv-provisioner-init
+  annotations:
+    description: "Prepare host path /var/lib/cimreg-local on all nodes for cimreg registry"
+spec:
+  # this deployment concerns pod with this label
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cimreg
+      app.kubernetes.io/component: localpv-provisioner-init
+  # when creating pod, use this pod definition    
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cimreg
+        app.kubernetes.io/component: localpv-provisioner-init
+    spec:
+      containers:
+      - name: creator
+        image: alpine:latest
+        securityContext:
+          runAsUser: 0
+        command: ["/bin/sh", "-c"]
+        args:
+          # - "mkdir -p /mnt/target && tail -f /dev/null"
+          - "tail -f /dev/null"
+        volumeMounts:
+        - name: host-node-root
+          mountPath: /mnt/target
+      volumes:
+      - name: host-node-root
+        hostPath: # Use a directory located directly on the node FS
+          path: /var/lib/cimreg-local
+          type: DirectoryOrCreate # Kubernetes auto create the folder on the node before mounting it into the container if it doesn't already exist.
