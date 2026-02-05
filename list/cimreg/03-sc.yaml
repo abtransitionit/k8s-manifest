@@ -11,11 +11,11 @@ metadata:
   annotations:
     description: "Persistent storage for the internal container registry cimreg"
     # This covers the "Legacy/CAS" logic seen in the default class
-    cas.openebs.io/config: |
-      - name: StorageType
-        value: "hostpath"
-      - name: BasePath
-        value: "/var/lib/cimreg-local"
+    # cas.openebs.io/config: |
+    #   - name: StorageType
+    #     value: "hostpath"
+    #   - name: BasePath
+    #     value: "/var/lib/cimreg-local"
 provisioner: openebs.io/local
 reclaimPolicy: Retain # When PVC is deleted, PV is not deleted; data persists on the node - see https://kubernetes.io/docs/concepts/storage/storage-classes/
 volumeBindingMode: WaitForFirstConsumer # PV is created only when the pod using a PVC (taht uses that SC) is scheduled, not before

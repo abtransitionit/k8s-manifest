@@ -25,14 +25,14 @@ spec:
         app.kubernetes.io/name: cimreg
         app.kubernetes.io/component: registry
     spec:
-      # Pod must be schedule where the provisioner is provisioned
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: openebs.io/nodename
-                operator: Exists
+      # # Pod must be schedule where the provisioner is provisioned
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #       - matchExpressions:
+      #         - key: openebs.io/nodename
+      #           operator: Exists
       containers:
         - name: cregistry                   # 1. The Container Identity
           image: registry:3.0.0

@@ -144,6 +144,11 @@ when scheduling the node for the pod, the scheduler picks a node:
   - Normally, it could choose any node that fits.
   - But the pod uses a PVC bound to a local PV, which only exists on one node.
   - So the scheduler has only one valid choice → the same node.
+# Debug
+**restart the provisioner**
+```
+kubectl rollout restart deployment kbe-openebs-localpv-provisioner -n openebs
+```
 
 # Todo
 |step|purpose|comment|
