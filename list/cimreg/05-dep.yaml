@@ -33,16 +33,37 @@ spec:
       #       - matchExpressions:
       #         - key: openebs.io/nodename
       #           operator: Exists
-      containers:
+      containers:  
         - name: cregistry                   # 1. The Container Identity
           image: registry:3.0.0
+          env:
+          - name: REGISTRY_TRACING_ENABLED # disable tracing to avoid error logs
+            value: "false"
+          - name: OTEL_TRACES_EXPORTER
+          value: "none"  
           ports:
             - containerPort: 5000
-              name: regsvcport                 # 2. The Container Port label (alias for port 5000 for this container)
+              name: cimreg-port-container                 # 2. The Container Port label (alias for port 5000 for this container)
           # --- PART 2: THE DESTINATION ---
           volumeMounts:
             - name: registry-storage        # Matches the volume name below
-              mountPath: /var/lib/registry  # mount point inside the container
+              mountPath: /var/lib/registry  # mount point inside the container              
+          # --- PROBES START HERE ---
+          # Checks if the app inside the container is alive. If this fails, K8s kills and restarts the pod.
+          livenessProbe:
+            httpGet:
+              path: /v2/
+              port: cimreg-port-container
+            initialDelaySeconds: 15
+            periodSeconds: 20          
+          # Checks if the app inside the container is ready for traffic. If this fails, the Service stops sending traffic here.
+          readinessProbe:
+            httpGet:
+              path: /v2/
+              port: cimreg-port-container
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          # --- PROBES END HERE ---                    
       # --- PART 1: THE SOURCE ---
       volumes:
         - name: registry-storage  # a uniq name for the volume
