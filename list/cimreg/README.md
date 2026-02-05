@@ -24,8 +24,7 @@ list of the manifests of the application
 ## prep.yaml
 
 1. `kubectl apply -f cimreg-ds.yaml`
-1. Kubernetes sees a **DaemonSet**, so it decides:
-    - “I must run one pod on **every node** in the cluster.”
+1. Kubernetes sees a **DaemonSet**, so it decides: “I must run one pod on **every node** in the cluster.”
 1. For **each node**, Kubernetes creates **one pod** in the `kube-system` namespace.
 1. Before the pod starts, on **each node’s filesystem**:
     - Kubernetes checks `/var/lib/cimreg-local`
@@ -49,10 +48,104 @@ list of the manifests of the application
   - The pod just stays running, acting as a **host preparation helper**
   - 👉 this manifest ensures the directory `/var/lib/cimreg-local` exists on all node (new or existing) of the cluster
 
+## sc.yaml
+
+1. `kubectl apply -f cimreg-sc.yaml`
+1. Kubernetes creates a **StorageClass** named `cimreg-sc`
+    - This is **not a pod**
+    - Nothing runs
+    - Nothing is created on nodes *yet*
+1. This StorageClass tells Kubernetes:
+    - Use **OpenEBS local provisioner**
+    - Storage will be **local to a node**
+    - Volumes are **directories on the host filesystem**
+1. At this point:
+    - **No PV exists**
+    - **No directory is created**
+    - This is just a **rule/template** describing *how storage should be created later*
+1. When a **PVC using `cimreg-sc` is created**:
+    - Kubernetes still does **nothing on disk**
+    - It waits because `volumeBindingMode: WaitForFirstConsumer`
+1. When a **pod that uses this PVC is scheduled**:
+    - Kubernetes chooses **one specific node** for that pod
+    - Only then does the provisioner act
+1. On the selected node:
+    - OpenEBS creates a **PV**
+    - A **new directory** is created under
+  `/var/lib/cimreg-local/`
+  (for example: `/var/lib/cimreg-local/pvc-xxxxx`)
+    - This directory lives **on the host filesystem**
+1. Inside the pod:
+    - The PV directory is **mounted into the container**
+    - The container reads/writes data there
+    - Data is stored **directly on that node**
+1. If the **pod restarts on the same node**:
+    - The same directory is reused
+    - Data is still there
+1. If the **PVC is deleted**:
+    - The PV is **not deleted** (`Retain`)
+    - The directory on the node **remains**
+    - Data is preserved until manually cleaned
+
+**Result**:
+👉 this manifest ensures that any PV created with it uses a directory under `/var/lib/cimreg-local` on the node where the pod runs
+
+## dep.yaml
+
+1. `kubectl apply -f cimreg-sc.yaml`
+1. Kubernetes creates a **Deployment** named `cimreg-deploy` in the `cimreg` namespace.
+1. The Deployment says: “I want **1 running pod** at all times.”
+1. Kubernetes creates **one pod** matching the labels:
+    - `app.kubernetes.io/name: cimreg`
+    - `app.kubernetes.io/component: registry`
+1. To start the pod, Kubernetes sees:
+    - The pod needs a **PVC** named `cimreg-pvc`
+    - The PVC uses a **SC** (from earlier)
+1. Because of `WaitForFirstConsumer`:
+    - Kubernetes first chooses **one specific node** for the pod
+    - The pod is **bound to that node**
+1. On that chosen node:
+    - The `SC` provisioner creates:
+      * one **PV**
+      * one **directory on the host**, under
+    `/var/lib/cimreg-local/…`
+    - This directory becomes the **real storage** for the registry
+1. The pod starts on that node:
+    - A container `cregistry` is launched
+    - Image: `registry:3.0.0`
+    - The container listens on port **5000**
+1. Inside the container:
+    - The host directory (via PV → PVC)
+    - is mounted into the container at `/var/lib/registry`
+1. When the registry writes images:
+    - Data goes to `/var/lib/registry` inside the container
+    - Which is actually stored on the **node filesystem**
+1. If the pod is deleted, crashes or restarts:
+    - Kubernetes recreates the pod
+    - The pod is scheduled on the same node because
+      - the PV is local
+      - the PVC is bound to that PV
+      - Kubernetes must schedule the pod on that same node (desired state).
+    - The same storage directory is reused
+    - Registry data is still there
+1. If the Deployment is deleted:
+    - The pod is deleted
+    - The PVC may be deleted
+    - The PV and the data **remain on the node** (`Retain`)
 
 
+**Result**:
 
+👉 **This manifest ensures** that exactly one Docker registry pod runs on a single node and stores its data persistently on that node’s local filesystem via a PVC-backed volume.
 
+**Comment**
+
+when scheduling the node for the pod, the scheduler picks a node:
+  - Normally, it could choose any node that fits.
+  - But the pod uses a PVC bound to a local PV, which only exists on one node.
+  - So the scheduler has only one valid choice → the same node.
+
+# Todo
 |step|purpose|comment|
 |-|-|-|
 |2|Persistent Storage|PVC + Storage validation
