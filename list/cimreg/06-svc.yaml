@@ -18,7 +18,7 @@ spec:
     app.kubernetes.io/name: cimreg
     app.kubernetes.io/component: registry
   ports:
-    - name: cimreg-port-svc   # The Service Port name (used as a var)
+    - name: port-k8-svc       # The Service Port name (used as a var)
       port: 5000              # The port the SERVICE listens on and exposes inside the cluster
       targetPort: port-ct-svc # References the container service port - the NAME in the Deployment
       protocol: TCP
