@@ -16,29 +16,20 @@
 |**Image**|registry:3.0.0|
 |**Purpose**|container image **authorized** in the cluster|
 
-# Step
-| Step | File         | Resource     | Purpose               |
-| ---: | ------------ | ------------ | --------------------- |
-|   00 | 00-ns.yaml   | Namespace    | scope                 |
-|   01 | 01-cm.yaml   | ConfigMap    | contract / parameters |
-|   02 | 02-prep.yaml | DaemonSet    | host preparation      |
-|   03 | 03-sc.yaml   | StorageClass | storage abstraction   |
-|   04 | 04-pvc.yaml  | PVC          | data claim            |
-|   05 | 05-dep.yaml  | Deployment   | workload              |
 
 # Manifest
 
 list of the manifests of the application
 
-| id| Yaml| kind|Description|
-|-|-|-|-|
-| 00| `00-ns.yaml`| `Ns:cimreg`|ensures the namespace exists
-| 01| `01-cm.yaml`| `CM:cimreg-cm`|ensures the envar exits (CIMREG_HOSTPATH, ...)|
-| 02| `02-prep.yaml`| `CM:cimreg-ds`| ensures folder `CIMREG_HOSTPATH` exists on all nodes|
+| id| Yaml| kind|Description|Purpose|
+|-|-|-|-|-|
+| 00| `00-ns.yaml`| `Ns:cimreg`|ensures the namespace exists|scope
+| 01| `01-cm.yaml`| `CM:cimreg-cm`|ensures the envar exits (CIMREG_HOSTPATH, ...)|parameters
+| 02| `02-prep.yaml`| `CM:cimreg-ds`| ensures folder `CIMREG_HOSTPATH` exists on all nodes|host preparation
 | 03| `03-sc.yaml`| `SC:cimreg-sc`|ensures OpenEBS local hostPath exists|
 | 04| `04-pvc.yaml`| `PVC:cimreg-pvc`| uses `SC:cimreg-sc`|
-| 05| `05-dep.yaml`| `Deploy:cimreg-deploy`|Deployment for Docker registry `registry:3.0.0`|
-| 05| `06-svc.yaml`| `Service:cimreg-svc`|ensures a **simple** well known **Ip:port/Dns** for the container image registry service|
+| 05| `05-dep.yaml`| `Deploy:cimreg-deploy`|Deployment for Docker registry `registry:3.0.0`|workload
+| 05| `06-svc.yaml`| `Service:cimreg-svc`|ensures a **simple** well known **Ip:port/Dns** for the container image registry |expose the serviceservice|
 
 
 ## prep.yaml

@@ -1,6 +1,7 @@
 [←]: ../README.md
 [cimreg]: ./cimreg/README.md
 [rancher]: ./rancher/README.md
+[ui]: ./ui/README.md
 
 # [←] K8s Manifest
 - define a set of contenairized app
@@ -9,3 +10,4 @@
 # List
 - [cimreg]
 - [rancher]
+- [ui]

@@ -13,12 +13,12 @@ metadata:
     description: "ClusterIP service for cimreg"
 spec:
   type: ClusterIP            # Internal-IP only - no external access. Use type LoadBalancer or Ingress for external access.
-  # this kind lookup for/apply to pod with these labels (that are created by the deployment)
+  # this kind lookup for/apply to pod with these labels
   selector: 
     app.kubernetes.io/name: cimreg
     app.kubernetes.io/component: registry
   ports:
-    - name: port-k8-svc       # define the service port name (used as a var)
+    - name: port-k8-svc       # defines the service port name (used as a var)
       port: 5000              # The port the SERVICE listens on and exposes inside the cluster
-      targetPort: port-ct-svc # References the container service port - the NAME in the Deployment
+      targetPort: port-ct-svc # reference to the port in the selected pod
       protocol: TCP

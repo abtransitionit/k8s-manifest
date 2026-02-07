@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mxui-firefox
+  name: mxui-dep-firefox
   namespace: mxui
   labels:
     app.kubernetes.io/name: firefox-ui
@@ -33,6 +33,10 @@ spec:
             requests:
               memory: "512Mi"
               cpu: "500m"
+          # Fix for Firefox: Shared Memory mount
+          volumeMounts:
+            - name: cache-shm
+              mountPath: /dev/shm    
           # probe begin    
           livenessProbe:
             tcpSocket:
@@ -44,3 +48,8 @@ spec:
               port: port-ct-svc
             initialDelaySeconds: 5
           # probe end
+      # Fix for Firefox: Shared Memory mount
+      volumes:
+        - name: cache-shm
+          emptyDir:
+            medium: Memory

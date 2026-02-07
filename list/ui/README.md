@@ -3,28 +3,22 @@
 
 # [←] Cimreg
 - a contenerized application
-- an in-cluster private container image registry
+- an in-cluster tool that expose several uis (**U**ser **I**nterface**s**) like firefox
 - uses 
-  - the CSI `OpenEBS` hostPath feature
-  - the docker `registry:2`
+  - the image `jlesage/firefox:latest`
 
 ## The app
 
 |Key|Value|comment|
 |-|-|-|
-|**Application name**| cimreg
-|**Image**|registry:3.0.0|
-|**Purpose**|container image **authorized** in the cluster|
+|**Application name**| mxui
 
 # Step
 | Step | File         | Resource     | Purpose               |
 | ---: | ------------ | ------------ | --------------------- |
 |   00 | 00-ns.yaml   | Namespace    | scope                 |
-|   01 | 01-cm.yaml   | ConfigMap    | contract / parameters |
-|   02 | 02-prep.yaml | DaemonSet    | host preparation      |
-|   03 | 03-sc.yaml   | StorageClass | storage abstraction   |
-|   04 | 04-pvc.yaml  | PVC          | data claim            |
-|   05 | 05-dep.yaml  | Deployment   | workload              |
+|   01 | 01-dep.yaml  | Deployment   | workload              |
+|   02 | 02-svc.yaml  | Service   | expose              |
 
 # Manifest
 
