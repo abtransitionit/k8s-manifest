@@ -1,7 +1,5 @@
 # clustered resources
 
-# clustered resources
-
 apiVersion: v1
 kind: Namespace
 metadata:

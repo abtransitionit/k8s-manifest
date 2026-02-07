@@ -40,12 +40,12 @@ spec:
           # probe begin    
           livenessProbe:
             tcpSocket:
-              port: port-ct-svc
+              port: 5800
             initialDelaySeconds: 10
           readinessProbe:
             httpGet:
               path: /
-              port: port-ct-svc
+              port: 5800
             initialDelaySeconds: 5
           # probe end
       # Fix for Firefox: Shared Memory mount
