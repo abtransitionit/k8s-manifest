@@ -1,0 +1,22 @@
+# clustered resources
+
+# clustered resources
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mxui
+  labels:
+    # Standard Kubernetes Labels
+    app.kubernetes.io/name: mxui
+    app.kubernetes.io/component: front-service
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: kubectl
+
+    # Operational & Routing Labels
+    workload-type: interactive-ui
+    exposure: internal
+
+  annotations:
+    description: "Namespace for hosting web-based user interfaces and browser instances"
+    owner: "mx"

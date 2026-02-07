@@ -27,14 +27,14 @@ spec:
         app.kubernetes.io/component: registry
     spec:
       containers:  
-        - name: cregistry                   # 1. The Container Identity
+        - name: cregistry                     # 1. The Container Identity
           image: registry:3.0.0
           env:
           - name: OTEL_TRACES_EXPORTER # disable tracing (opentelemetry) - avoid error logs
             value: "none"  
           ports:
             - containerPort: 5000
-              name: port-ct-svc                 # 2. The Container Port name (used as a var)
+              name: port-ct-svc                 # 2. define the container port name (used as a var)
           # --- PART 2: THE DESTINATION ---
           volumeMounts:
             - name: registry-storage        # Matches the volume name below

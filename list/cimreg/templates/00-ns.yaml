@@ -6,8 +6,8 @@ metadata:
   name: cimreg
 
   labels:
-    app.kubernetes.io/component: registry
     app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: registry
     app.kubernetes.io/part-of: container-image-registry
     app.kubernetes.io/managed-by: kubectl
 

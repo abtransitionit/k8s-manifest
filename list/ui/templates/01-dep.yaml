@@ -1,0 +1,46 @@
+# namespaced resources
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mxui-firefox
+  namespace: mxui
+  labels:
+    app.kubernetes.io/name: firefox-ui
+    app.kubernetes.io/component: firefox-ui
+    app.kubernetes.io/part-of: mxui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: firefox
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: firefox
+    spec:
+      containers:
+        - name: firefox
+          image: jlesage/firefox:latest
+          ports:
+            - containerPort: 5800
+              name: port-ct-svc
+          # Resources are "strictly necessary" for browsers to prevent node OOM
+          resources:
+            limits:
+              cpu: "750m"
+              memory: "768Mi"
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+          # probe begin    
+          livenessProbe:
+            tcpSocket:
+              port: port-ct-svc
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: port-ct-svc
+            initialDelaySeconds: 5
+          # probe end
