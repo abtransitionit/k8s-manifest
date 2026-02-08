@@ -4,19 +4,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mxui-svc-firefox
+  name: mxui-svc-brwoser
   namespace: mxui
   labels:
-    app.kubernetes.io/name: firefox-ui
-    app.kubernetes.io/component: firefox-ui
+    app.kubernetes.io/name: brwoser-ui
+    app.kubernetes.io/component: brwoser-ui
     app.kubernetes.io/part-of: mxui
   annotations:
-    description: "ClusterIP service for internal Firefox UI access"
+    description: "ClusterIP service for internal Browser UI access"
 spec:
   type: ClusterIP            # Internal-IP only - no external access. Use type LoadBalancer or Ingress for external access.
   # this kind lookup for/apply to pod with these labels
   selector: 
-    app.kubernetes.io/name: firefox
+    app.kubernetes.io/name: browser
   ports:
     - name: port-k8-svc       # defines the service port name (used as a var)
       port: 5800              # the port the SERVICE listens on and exposes inside the cluster
