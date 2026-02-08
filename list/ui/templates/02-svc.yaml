@@ -20,5 +20,5 @@ spec:
   ports:
     - name: port-k8-svc       # defines the service port name (used as a var)
       port: 5800              # the port the SERVICE listens on and exposes inside the cluster
-      targetPort: 5800 # reference to the port in the selected pod
+      targetPort: port-ct-svc # reference to the port in the selected pod
       protocol: TCP
