@@ -3,36 +3,48 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mxui-dep-firefox
+  name: mxui-dep-browser
   namespace: mxui
   labels:
-    app.kubernetes.io/name: firefox-ui
-    app.kubernetes.io/component: firefox-ui
+    app.kubernetes.io/name: browser-ui
+    app.kubernetes.io/component: browser-ui
     app.kubernetes.io/part-of: mxui    
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: firefox
+      app.kubernetes.io/name: browser
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: firefox
+        app.kubernetes.io/name: browser
     spec:
       containers:
-        - name: firefox
-          image: jlesage/firefox:latest
+        - name: cchromium
+          image: lscr.io/linuxserver/chromium:latest
           ports:
-            - containerPort: 5800
+            - containerPort: 3000
               name: port-ct-svc
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Etc/UTC"
+            # Lowering resolution significantly improves responsiveness
+            - name: SCREEN_WIDTH
+              value: "1280"
+            - name: SCREEN_HEIGHT
+              value: "720"    
           # Resources are "strictly necessary" for browsers to prevent node OOM
           resources:
             limits:
-              cpu: "750m"
-              memory: "768Mi"
+              cpu: "1500m"   # Increased for smoother rendering
+              memory: "1Gi"
             requests:
-              memory: "512Mi"
               cpu: "500m"
+              memory: "512Mi"
           # Fix for Firefox: Shared Memory mount
           volumeMounts:
             - name: cache-shm
