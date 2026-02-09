@@ -1,0 +1,19 @@
+
+
+enabled:
+  all: false # if true, all components are enabled regardless of individual switches
+  # Individual switches (Defaulted to false)
+  mnf:
+    ns: false
+    cm: false
+    prep: false
+    sc: false
+    pvc: false
+    deploy: false
+    service: false
+
+# actual data
+cimreg:
+  hostPath: /var/lib/cimreg-local
+  image:    registry:3.0.0
+  namaspace: cimreg

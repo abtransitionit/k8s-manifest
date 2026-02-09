@@ -6,10 +6,10 @@ metadata:
   name: mxui
   labels:
     # Standard Kubernetes Labels
+    app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: mxui
     app.kubernetes.io/component: front-service
     app.kubernetes.io/version: "1.0.0"
-    app.kubernetes.io/managed-by: kubectl
 
     # Operational & Routing Labels
     workload-type: interactive-ui

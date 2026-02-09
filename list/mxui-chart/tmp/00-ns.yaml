@@ -1,0 +1,21 @@
+# clustered resources
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.cimreg.namespace }}
+
+  labels:
+    app.kubernetes.io/name: mxui
+    app.kubernetes.io/component: front-service
+    app.kubernetes.io/managed-by: helm
+
+    # operational classification
+    workload-type: stateful
+    exposure: internal
+
+  annotations:
+    description: "Namespace for hosting web-based user interfaces like browser"
+    owner: "abtransitionit"
+
+

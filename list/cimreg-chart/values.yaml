@@ -16,4 +16,4 @@ enabled:
 cimreg:
   hostPath: /var/lib/cimreg-local
   image:    registry:3.0.0
-  ns: cimreg
+  namaspace: cimreg

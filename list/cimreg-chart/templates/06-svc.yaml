@@ -6,12 +6,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cimreg-svc
-  namespace: cimreg
+  # namespace is injected by helm
   labels:
+    app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: cimreg
-    app.kubernetes.io/component: registry
+    app.kubernetes.io/component: svc
   annotations:
-    description: "ClusterIP service for cimreg"
+    owner: "abtransitionit"
+    description: "allows access to all pod:port behind this service"
 spec:
   type: ClusterIP            # Internal-IP only - no external access. Use type LoadBalancer or Ingress for external access.
   # this kind lookup for/apply to pod with these labels (that are created by the deployment)

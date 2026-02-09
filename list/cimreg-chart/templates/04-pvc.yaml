@@ -5,12 +5,14 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: cimreg-pvc
-  namespace: cimreg
+  # namespace is injected by helm
   labels:
+    app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: cimreg
-    app.kubernetes.io/component: registry
+    app.kubernetes.io/component: storage
   annotations:
-    description: "PVC for the internal container registry cimreg"
+    owner: "abtransitionit"
+    description: "requests storage:location/volume:path/folder:path when needed"
 spec:
   accessModes:
     - ReadWriteOnce

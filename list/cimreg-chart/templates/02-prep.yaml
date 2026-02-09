@@ -1,16 +1,21 @@
 # clustered resources
+# - an admin tool for the cimreg app
+# - acts on all node
 
 {{- if or .Values.enabled.all .Values.enabled.mnf.prep }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: cimreg-ds
-  namespace: kube-system # this is an admin tool, that acts on all node, so it can be in kube-system, not in cimreg ns
+  # namespace is injected by helm
   labels:
     app.kubernetes.io/name: cimreg
-    app.kubernetes.io/component: localpv-provisioner-init
+    # app.kubernetes.io/part-of: storage
+    app.kubernetes.io/component: storage
+    app.kubernetes.io/managed-by: helm
   annotations:
-    description: "Prepare host path /var/lib/cimreg-local on all nodes for cimreg registry"
+    owner: "abtransitionit"
+    description: "ensures folder /var/lib/cimreg-local exists on all nodes for app:cimreg"
 spec:
   # this deployment concerns pod with this label
   selector:

@@ -5,12 +5,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cimreg-deploy
-  namespace: cimreg
+  # namespace is injected by helm
   labels:
+    app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: cimreg
-    app.kubernetes.io/component: registry
+    app.kubernetes.io/component: svc
   annotations:
-    description: "Docker Container Image Registry deployment using registry:3.0.0 image"
+    owner: "abtransitionit"
+    description: "deploys cim registry:3.0.0 image"
 spec:
   # ensures 1 pod on 1 node
   replicas: 1

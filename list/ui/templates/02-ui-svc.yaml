@@ -7,11 +7,11 @@ metadata:
   name: mxui-svc-brwoser
   namespace: mxui
   labels:
-    app.kubernetes.io/name: brwoser-ui
-    app.kubernetes.io/component: brwoser-ui
-    app.kubernetes.io/part-of: mxui
+    app.kubernetes.io/managed-by: helm
+    app.kubernetes.io/name: mxui
+    app.kubernetes.io/component: svc
   annotations:
-    description: "ClusterIP service for internal Browser UI access"
+     description: "ClusterIP service for the Browser"
 spec:
   type: ClusterIP            # Internal-IP only - no external access. Use type LoadBalancer or Ingress for external access.
   # this kind lookup for/apply to pod with these labels

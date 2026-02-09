@@ -1,0 +1,24 @@
+# namespaced resources 
+# yet: clusterIP, No ingress, no TLS, no auth
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mxui-svc-brwoser
+  namespace: mxui
+  labels:
+    app.kubernetes.io/managed-by: helm
+    app.kubernetes.io/name: mxui
+    app.kubernetes.io/component: svc
+  annotations:
+     description: "ClusterIP for the Browser"
+spec:
+  type: ClusterIP
+  # pod:port to select as entry points behind the service
+  selector: 
+    app.kubernetes.io/name: browser
+  ports:
+    - name: port-k8-svc       # defines the service port name (used as a var)
+      port: 5800              # the port the SERVICE listens on and exposes inside the cluster
+      targetPort: port-ct-svc # reference to the port in the selected pod
+      protocol: TCP

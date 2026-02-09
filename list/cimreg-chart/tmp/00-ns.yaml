@@ -6,10 +6,10 @@ metadata:
   name: {{ .Values.cimreg.namespace }}
 
   labels:
-    app.kubernetes.io/component: registry
+    app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: registry
     app.kubernetes.io/part-of: container-image-registry
-    app.kubernetes.io/managed-by: kubectl
 
     # operational classification
     workload-type: stateful
@@ -17,4 +17,4 @@ metadata:
 
   annotations:
     description: "Container Image Registry (cimreg)"
-    owner: "mx"
+    owner: "abtransitionit"

@@ -1,0 +1,64 @@
+# namespaced resources
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mxui-dep-browser
+  # namespace is injected by helm
+  labels:
+    app.kubernetes.io/managed-by: helm
+    app.kubernetes.io/name: mxui
+    app.kubernetes.io/component: svc
+  annotations:
+    owner: "abtransitionit"
+    description: "web user interface for a browser"
+spec:
+  # this <kind> controller ENSURES there will be X pod running simultaneously/concurently (if possible)
+  replicas: 1
+  # selector : defines which pod
+  selector:
+    matchLabels:
+      # pod that have defined this labels
+      app.kubernetes.io/name: browser
+  # template : defines the pod [potentially] created by this <kind> controller, if they do not exist already
+  template:
+    metadata:
+      labels:
+        # pod:labels
+        app.kubernetes.io/name: browser
+    # spec : defines container properties that this pod will hold
+    spec:
+      containers:
+        - name: cfirefox
+          image: jlesage/firefox:latest
+          ports:
+            - containerPort: 5800
+              name: port-ct-svc
+          # Resources are "strictly necessary" for browsers to prevent node OOM
+          resources:
+            limits:
+              cpu: "750m"
+              memory: "768Mi"
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+          # Fix for Firefox: Shared Memory mount
+          volumeMounts:
+            - name: cache-shm
+              mountPath: /dev/shm    
+          # probe begin    
+          livenessProbe:
+            tcpSocket:
+              port: port-ct-svc
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: port-ct-svc
+            initialDelaySeconds: 5
+          # probe end
+      # Fix for Firefox: Shared Memory mount
+      volumes:
+        - name: cache-shm
+          emptyDir:
+            medium: Memory
