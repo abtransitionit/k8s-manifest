@@ -4,7 +4,9 @@ description: install ui services like browser jenkins, sonarqube, nexus
 type: application
 
 # chart version
+# bump version when chart templates change
+# Every merge to main → bump chart version.
 version: 0.1.0
 
-# app version
+# app version - Keep appVersion aligned with the container image tag
 appVersion: "0.1.0"
