@@ -6,5 +6,5 @@ type: application
 # chart version
 version: 0.1.0
 
-# app versiono
+# app version
 appVersion: "0.1.0"
