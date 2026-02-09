@@ -1,0 +1,73 @@
+# namespaced resources
+
+{{- if or .Values.enabled.all .Values.enabled.mnf.dep }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cimreg-deploy
+  namespace: cimreg
+  labels:
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: registry
+  annotations:
+    description: "Docker Container Image Registry deployment using registry:3.0.0 image"
+spec:
+  # ensures 1 pod on 1 node
+  replicas: 1
+  # this kind lookup for/apply to these labels on pod
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cimreg
+      app.kubernetes.io/component: registry
+  # when creating pod, use this pod definition
+  template:
+    metadata:
+      # define these labels on the pod
+      labels:
+        app.kubernetes.io/name: cimreg
+        app.kubernetes.io/component: registry
+    spec:
+      containers:  
+        - name: cregistry                     # 1. The Container Identity
+          image: registry:3.0.0
+          env:
+          - name: OTEL_TRACES_EXPORTER # disable tracing (opentelemetry) - avoid error logs
+            value: "none"  
+          ports:
+            - containerPort: 5000
+              name: port-ct-svc                 # 2. define the container port name (used as a var)
+          # --- PART 2: THE DESTINATION ---
+          volumeMounts:
+            - name: registry-storage        # Matches the volume name below
+              mountPath: /var/lib/registry  # mount point inside the container              
+          # --- PROBES START HERE ---
+          # Checks if the app inside the container is alive. If this fails, K8s kills and restarts the pod.
+          livenessProbe:
+            httpGet:
+              path: /v2/
+              port: port-ct-svc
+            initialDelaySeconds: 15
+            periodSeconds: 20          
+          # Checks if the app inside the container is ready for traffic. If this fails, the Service stops sending traffic here.
+          readinessProbe:
+            httpGet:
+              path: /v2/
+              port: port-ct-svc
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          # --- PROBES END HERE ---                    
+      # --- PART 1: THE SOURCE ---
+      volumes:
+        - name: registry-storage  # a uniq name for the volume
+          persistentVolumeClaim:
+            claimName: cimreg-pvc # the PVC (data-source)
+{{- end }}
+
+# # if Pod must be schedule where the provisioner is provisioned
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#       - matchExpressions:
+#         - key: openebs.io/nodename
+#           operator: Exists

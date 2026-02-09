@@ -1,0 +1,16 @@
+
+
+# Toggle manifests on/off
+enabled:
+  ns: false
+  cm: false
+  prep: false
+  sc: false
+  pvc: false
+  deploy: false
+  svc: false
+
+# actual data
+cimreg:
+  hostPath: /var/lib/cimreg-local
+  image:    registry:3.0.0

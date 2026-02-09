@@ -1,0 +1,16 @@
+# namespaced resources
+
+{{- if or .Values.enabled.all .Values.enabled.mnf.cm }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cimreg-cm
+  namespace: cimreg
+  labels:
+    app.kubernetes.io/name: cimreg
+  annotations:
+    description: "ConfigMap storing the path used for internal container registry volumes"
+data:
+  CIMREG_HOSTPATH: {{ .Values.cimreg.hostPath | quote }}
+{{- end }}
+

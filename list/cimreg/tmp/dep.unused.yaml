@@ -51,6 +51,13 @@ spec:
           ports:
             - containerPort: 5000
               name: regsvcport                 # 2. The Container Port label (alias for port 5000 for this container)
+          resources:
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+            requests:
+              cpu: "0.5"
+              memory: "256Mi"                    
           # --- PART 2: THE DESTINATION ---
           volumeMounts:
             - name: registry-storage        # Matches the volume name below

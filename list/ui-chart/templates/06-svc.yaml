@@ -1,0 +1,26 @@
+# namespaced resources 
+# yet: clusterIP, No ingress, no TLS, no auth
+
+{{- if or .Values.enabled.all .Values.enabled.mnf.svc }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: cimreg-svc
+  namespace: cimreg
+  labels:
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: registry
+  annotations:
+    description: "ClusterIP service for cimreg"
+spec:
+  type: ClusterIP            # Internal-IP only - no external access. Use type LoadBalancer or Ingress for external access.
+  # this kind lookup for/apply to pod with these labels (that are created by the deployment)
+  selector: 
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: registry
+  ports:
+    - name: port-k8-svc       # define the service port name (used as a var)
+      port: 5000              # The port the SERVICE listens on and exposes inside the cluster
+      targetPort: port-ct-svc # References the container service port - the NAME in the Deployment
+      protocol: TCP
+{{- end }}
