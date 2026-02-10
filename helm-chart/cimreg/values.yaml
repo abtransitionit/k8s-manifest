@@ -15,5 +15,4 @@ enabled:
 # actual data
 cimreg:
   hostPath: /var/lib/cimreg-local
-  image:    registry:3.0.0
-  namaspace: cimreg
+  cimage:    registry:3.0.0

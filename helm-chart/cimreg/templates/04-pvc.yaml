@@ -1,15 +1,16 @@
-# namespaced resources
-
 {{- if or .Values.enabled.all .Values.enabled.mnf.pvc }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: cimreg-pvc
-  # namespace is injected by helm
+  # namespace is injected by helm at install
   labels:
+    app.kubernetes.io/part-of: container-image-registry
     app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: cimreg
     app.kubernetes.io/component: storage
+    app.abtrit.io/ct: create
+    app.abtrit.io/rt: namespaced
   annotations:
     owner: "abtransitionit"
     description: "requests storage:location/volume:path/folder:path when needed"

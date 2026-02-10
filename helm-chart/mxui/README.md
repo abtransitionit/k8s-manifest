@@ -1,11 +1,13 @@
 
-[←]: ../../README.md
+[←]: ../README.md
+[`01-dep.yaml`]: ./templates/01-dep.yaml
+[`02-svc.yaml`]: ./templates/02-svc.yaml
 
-# [←] Cimreg
+# [←] MxUI
 - a contenerized application
-- an in-cluster tool that expose several uis (**U**ser **I**nterface**s**) like firefox
-- uses 
-  - the image `jlesage/firefox:latest`
+- an in-cluster tool that expose several UIs (**U**ser **I**nterface**s**) like firefox
+- example of image used:
+  - `jlesage/firefox:latest`
 
 ## The app
 
@@ -13,98 +15,18 @@
 |-|-|-|
 |**Application name**| mxui
 
-# Step
-| Step | File         | Resource     | Purpose               |
-| ---: | ------------ | ------------ | --------------------- |
-|   00 | 00-ns.yaml   | Namespace    | scope                 |
-|   01 | 01-dep.yaml  | Deployment   | workload              |
-|   02 | 02-svc.yaml  | Service   | expose              |
-
 # Manifest
 
-list of the manifests of the application
+list of the application's manifests
 
 | id| Yaml| kind|Description|
 |-|-|-|-|
-| 00| `00-ns.yaml`| `Ns:cimreg`|ensures the namespace exists
-| 01| `01-cm.yaml`| `CM:cimreg-cm`|ensures the envar exits (CIMREG_HOSTPATH, ...)|
-| 02| `02-prep.yaml`| `CM:cimreg-ds`| ensures folder `CIMREG_HOSTPATH` exists on all nodes|
-| 03| `03-sc.yaml`| `SC:cimreg-sc`|ensures OpenEBS local hostPath exists|
-| 04| `04-pvc.yaml`| `PVC:cimreg-pvc`| uses `SC:cimreg-sc`|
-| 05| `05-dep.yaml`| `Deploy:cimreg-deploy`|Deployment for Docker registry `registry:3.0.0`|
-| 05| `06-svc.yaml`| `Service:cimreg-svc`|ensures a **simple** well known **Ip:port/Dns** for the container image registry service|
+| 01| [`01-dep.yaml`]| `deploy:mxui-deploy`|Deployment for firefox|
+| 02| [`02-svc.yaml`]| `service:mxui-svc`|ensures a **simple** well known **Ip:port/Dns** for the browser service|
 
 
-## prep.yaml
 
-1. `kubectl apply -f cimreg-ds.yaml`
-1. Kubernetes sees a **DaemonSet**, so it decides: “I must run one pod on **every node** in the cluster.”
-1. For **each node**, Kubernetes creates **one pod** in the `kube-system` namespace.
-1. Before the pod starts, on **each node’s filesystem**:
-    - Kubernetes checks `/var/lib/cimreg-local`
-    - If it does **not exist**, it **creates the directory on the host**
-1. The pod starts on the node:
-    - It runs an `alpine` container
-    - The container runs as **root**
-    - The container does **nothing active** (`tail -f /dev/null` keeps it alive)
-1. Inside the container:
-    - The host directory `/var/lib/cimreg-local`
-    - is **mounted** into the container at `/mnt/target`
-1. If a **new node joins the cluster**:
-    - Kubernetes notices the new node
-    - The DaemonSet automatically schedules **one new pod on that node**
-    - Kubernetes creates `/var/lib/cimreg-local` on that node
-    - The directory is mounted into the pod at `/mnt/target`
-
-**Result**:
-  - On **every node**, the directory `/var/lib/cimreg-local` exists
-  - That directory is **visible from inside the pod** at `/mnt/target`
-  - The pod just stays running, acting as a **host preparation helper**
-  - 👉 this manifest ensures the directory `/var/lib/cimreg-local` exists on all node (new or existing) of the cluster
-
-## sc.yaml
-
-1. `kubectl apply -f cimreg-sc.yaml`
-1. Kubernetes creates a **StorageClass** named `cimreg-sc`
-    - This is **not a pod**
-    - Nothing runs
-    - Nothing is created on nodes *yet*
-1. This StorageClass tells Kubernetes:
-    - Use **OpenEBS local provisioner**
-    - Storage will be **local to a node**
-    - Volumes are **directories on the host filesystem**
-1. At this point:
-    - **No PV exists**
-    - **No directory is created**
-    - This is just a **rule/template** describing *how storage should be created later*
-1. When a **PVC using `cimreg-sc` is created**:
-    - Kubernetes still does **nothing on disk**
-    - It waits because `volumeBindingMode: WaitForFirstConsumer`
-1. When a **pod that uses this PVC is scheduled**:
-    - Kubernetes chooses **one specific node** for that pod
-    - Only then does the provisioner act
-1. On the selected node:
-    - OpenEBS creates a **PV**
-    - A **new directory** is created under
-  `/var/lib/cimreg-local/`
-  (for example: `/var/lib/cimreg-local/pvc-xxxxx`)
-    - This directory lives **on the host filesystem**
-1. Inside the pod:
-    - The PV directory is **mounted into the container**
-    - The container reads/writes data there
-    - Data is stored **directly on that node**
-1. If the **pod restarts on the same node**:
-    - The same directory is reused
-    - Data is still there
-1. If the **PVC is deleted**:
-    - The PV is **not deleted** (`Retain`)
-    - The directory on the node **remains**
-    - Data is preserved until manually cleaned
-
-**Result**:
-👉 this manifest ensures that any PV created with it uses a directory under `/var/lib/cimreg-local` on the node where the pod runs
-
-## dep.yaml
+# dep.yaml
 
 1. `kubectl apply -f cimreg-sc.yaml`
 1. Kubernetes creates a **Deployment** named `cimreg-deploy` in the `cimreg` namespace.
@@ -159,7 +81,7 @@ when scheduling the node for the pod, the scheduler picks a node:
   - But the pod uses a PVC bound to a local PV, which only exists on one node.
   - So the scheduler has only one valid choice → the same node.
 
-  # svc.yaml
+# svc.yaml
 
 1. `kubectl apply -f cimreg-svc.yaml`
 1. Kubernetes creates a **Service** named `cimreg-svc` in the `cimreg` namespace.
@@ -207,55 +129,16 @@ sudo mkdir -p /var/lib/cimreg-local
 sudo chmod 755 /var/lib/cimreg-local
 ```
 
-# Todo
-|step|purpose|comment|
-|-|-|-|
-|2|Persistent Storage|PVC + Storage validation
-|3|Configuration|ConfigMap or Secret(registry config.yml)
-|4|Deployment|Single pod registry
-|5|Service|ClusterIP first
-|6|External Access|Ingress / TLS / auth
-|7|Hardening|S• ecurityContext<br>• NetworkPolicy<br>• Resource limits<br>• PodDisruptionBudget
 
 ## Terminomogy
 |Term|Meaning|
 |-|-|
-|Cimreg|**C**ontainer **Im**age **Reg**istry|
-|EBS|**E**lastic **B**lock **S**torage|
+|UI|**U**ser **I**nterface|
 
 
-
-
-
-
-
-
-# code snipet
-**the probe**
-
-```yaml
-# --- PROBES START HERE ---
-# Checks if the app inside the container is alive. If this fails, K8s kills and restarts the pod.
-livenessProbe:
-  httpGet:
-    path: /v2/
-    port: port-ct-svc
-  initialDelaySeconds: 15
-  periodSeconds: 20          
-# Checks if the app inside the container is ready for traffic. If this fails, the Service stops sending traffic here.
-readinessProbe:
-  httpGet:
-    path: /v2/
-    port: port-ct-svc
-  initialDelaySeconds: 5
-  periodSeconds: 10
-# --- PROBES END HERE ---                    
-```
----
----
 
 # Test
-## Test the ClusterIp (very important)
+## Test the ClusterIp
 > ❗ `clusterIP` is the base for other kind of services (**LB**, **NodePort**)
 
 **from inside the cluster**

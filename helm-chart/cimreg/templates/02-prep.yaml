@@ -1,21 +1,18 @@
-# clustered resources
-# - an admin tool for the cimreg app
-# - acts on all node
-
 {{- if or .Values.enabled.all .Values.enabled.mnf.prep }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: cimreg-ds
-  # namespace is injected by helm
+  # namespace is injected by helm at install
   labels:
-    app.kubernetes.io/name: cimreg
-    # app.kubernetes.io/part-of: storage
-    app.kubernetes.io/component: storage
+    app.kubernetes.io/part-of: container-image-registry
     app.kubernetes.io/managed-by: helm
+    app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: init
+    app.abtrit.io/rt: clustered
   annotations:
     owner: "abtransitionit"
-    description: "ensures folder /var/lib/cimreg-local exists on all nodes for app:cimreg"
+    description: "ensures folder {{ .Values.cimreg.hostPath }} exists on all worker nodes"
 spec:
   # this deployment concerns pod with this label
   selector:

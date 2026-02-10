@@ -1,17 +1,18 @@
-# namespaced resources
-
 {{- if or .Values.enabled.all .Values.enabled.mnf.cm }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cimreg-cm
-  # namespace is injected by helm
+  # namespace is injected by helm at install
   labels:
+    app.kubernetes.io/part-of: container-image-registry
     app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: cimreg
+    app.kubernetes.io/component: config-shared
+    app.abtrit.io/rt: namespaced
   annotations:
     owner: "abtransitionit"
-    description: "stores the paramters for the app:cimreg"
+    description: "defines the config"
 data:
   CIMREG_HOSTPATH: {{ .Values.cimreg.hostPath | quote }}
 {{- end }}

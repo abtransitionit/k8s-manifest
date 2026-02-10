@@ -1,21 +1,19 @@
+
+[kubeclt manifest]: ./kubectl-manifest/README.md
+[helm chart]: ./helm-chart/README.md
+
+[kubeclt manifest]: ./kubectl-manifest/README.md
 [cimreg]: ./helm-chart/cimreg-chart/README.md
 [rancher]: ./kubectl-manifest/rancher/README.md
 [mxui]: ./helm-chart/mxui-chart/README.md
-# K8s manifest
+# Repository Overview
+This repository hosts a collection of resources used by the organization, including:
 
-This repository defines the set of 
-- k8s manifest
-- helm chart
+* [kubeclt manifest]
+* [helm chart]
 
-created na d used by the organization
+These resources are created, maintained, and actively used within our infrastructure.
 
-----
-
-
-# project
-- [cimreg]
-- [rancher]
-- [mxui]
 
 
 # Todo

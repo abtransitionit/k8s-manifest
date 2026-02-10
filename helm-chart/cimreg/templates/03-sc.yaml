@@ -1,17 +1,18 @@
-# clustered resources
-
 {{- if or .Values.enabled.all .Values.enabled.mnf.sc }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: cimreg-sc
   labels:
+    app.kubernetes.io/part-of: container-image-registry
     app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: cimreg
     app.kubernetes.io/component: storage
+    app.abtrit.io/ct: config
+    app.abtrit.io/rt: clustered
   annotations:
     owner: "abtransitionit"
-    description: "defines/configures the external storage manager to provision storage for app cimreg"
+    description: "defines and configures the external provisionner (aka. storage manager)"
 provisioner: openebs.io/local
 reclaimPolicy: Retain # When PVC is deleted, PV is not deleted; data persists on the node - see https://kubernetes.io/docs/concepts/storage/storage-classes/
 volumeBindingMode: WaitForFirstConsumer # PV is created only when the pod using a PVC (taht uses that SC) is scheduled, not before

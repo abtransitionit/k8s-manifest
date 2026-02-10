@@ -1,5 +1,5 @@
 
-[←]: ../../README.md
+[←]: ../README.md
 
 # [←] Cimreg
 - a contenerized application
@@ -11,14 +11,8 @@
 
 |Key|Value|comment|
 |-|-|-|
-|**Application name**| mxui
+|**Application name**| cimreg
 
-# Step
-| Step | File         | Resource     | Purpose               |
-| ---: | ------------ | ------------ | --------------------- |
-|   00 | 00-ns.yaml   | Namespace    | scope                 |
-|   01 | 01-dep.yaml  | Deployment   | workload              |
-|   02 | 02-svc.yaml  | Service   | expose              |
 
 # Manifest
 

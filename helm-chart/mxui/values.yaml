@@ -13,7 +13,5 @@ enabled:
     service: false
 
 # actual data
-cimreg:
-  hostPath: /var/lib/cimreg-local
+mxui:
   image:    registry:3.0.0
-  namaspace: cimreg

@@ -1,20 +1,21 @@
-# namespaced resources 
-# yet: clusterIP, No ingress, no TLS, no auth
-
-{{- if or .Values.enabled.all .Values.enabled.mnf.svc }}
+{{- if or .Values.enabled.all .Values.enabled.mnf.service }}
 apiVersion: v1
 kind: Service
 metadata:
   name: cimreg-svc
-  # namespace is injected by helm
+  # namespace is injected by helm at install
   labels:
+    app.kubernetes.io/part-of: container-image-registry
     app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: cimreg
     app.kubernetes.io/component: svc
+    app.abtrit.io/ct: endpoint
+    app.abtrit.io/rt: namespaced
   annotations:
     owner: "abtransitionit"
     description: "allows access to all pod:port behind this service"
 spec:
+  # yet: clusterIP, no ingress, no TLS, no auth
   type: ClusterIP            # Internal-IP only - no external access. Use type LoadBalancer or Ingress for external access.
   # this kind lookup for/apply to pod with these labels (that are created by the deployment)
   selector: 

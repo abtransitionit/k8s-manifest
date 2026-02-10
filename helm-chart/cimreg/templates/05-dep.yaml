@@ -1,18 +1,19 @@
-# namespaced resources
-
-{{- if or .Values.enabled.all .Values.enabled.mnf.dep }}
+{{- if or .Values.enabled.all .Values.enabled.mnf.deploy }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cimreg-deploy
-  # namespace is injected by helm
+  # namespace is injected by helm at install
   labels:
+    app.kubernetes.io/part-of: container-image-registry
     app.kubernetes.io/managed-by: helm
     app.kubernetes.io/name: cimreg
     app.kubernetes.io/component: svc
+    app.abtrit.io/ct: pod
+    app.abtrit.io/rt: namespaced
   annotations:
     owner: "abtransitionit"
-    description: "deploys cim registry:3.0.0 image"
+    description: "deploys container {{ .Values.cimreg.cimage}}"
 spec:
   # ensures 1 pod on 1 node
   replicas: 1
