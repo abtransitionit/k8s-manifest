@@ -1,9 +1,13 @@
-[cimreg]: ./list/cimreg/README.md
-[rancher]: ./list/rancher/README.md
-
+[cimreg]: ./helm-chart/cimreg-chart/README.md
+[rancher]: ./kubectl-manifest/rancher/README.md
+[mxui]: ./helm-chart/mxui-chart/README.md
 # K8s manifest
 
-This repository defines a set of k8s manifest used, created of forked by the organization
+This repository defines the set of 
+- k8s manifest
+- helm chart
+
+created na d used by the organization
 
 ----
 
@@ -11,6 +15,7 @@ This repository defines a set of k8s manifest used, created of forked by the org
 # project
 - [cimreg]
 - [rancher]
+- [mxui]
 
 
 # Todo
