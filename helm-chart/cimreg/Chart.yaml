@@ -1,6 +1,6 @@
 apiVersion: v2
-name: ui-chart
-description: install ui services like browser jenkins, sonarqube, nexus
+name: cimreg
+description: an OCI artifact registry for container images, Helm charts, ...
 type: application
 
 # chart version

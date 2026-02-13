@@ -2,16 +2,24 @@
 [←]: ../README.md
 
 # [←] Cimreg
+
+## Definition
 - a contenerized application
-- an in-cluster tool that expose several uis (**U**ser **I**nterface**s**) like firefox
+- a private `OCI` registry (for both Helm charts and OCI container images)
+- exposes a reachable clusterIP (for services it provide)
 - uses 
   - the image `jlesage/firefox:latest`
 
-## The app
+## Requirement
 
-|Key|Value|comment|
-|-|-|-|
-|**Application name**| cimreg
+| Property              | Value                   | Notes                          |
+| --------------------- | ----------------------- | ------------------------------ |
+| **Application Name**  | `cimreg`                | |
+| **Storage Type**      | **Single** Node storage      | Data is stored on a **single** node   |
+| **Storage Persistence** |  | • No cluster-resilience<br> •**Data is lost** on node failure          |
+
+
+
 
 
 # Manifest

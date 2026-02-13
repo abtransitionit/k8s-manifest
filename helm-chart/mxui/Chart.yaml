@@ -1,6 +1,6 @@
-apiVersion: v2
-name: ui-chart
-description: install ui services like browser jenkins, sonarqube, nexus
+apiVersion: v2 # helm v3 mandatory
+name: mxui
+description: accessible UI as a services like browser, interactive bash shell, sonarqube, nexus, ... 
 type: application
 
 # chart version

@@ -4,17 +4,20 @@
 [`02-svc.yaml`]: ./templates/02-svc.yaml
 
 # [←] MxUI
+## Definition
 - a contenerized application
-- an in-cluster tool that expose several UIs (**U**ser **I**nterface**s**) like firefox
+- exposes several UIs (**U**ser **I**nterface**s**) like firefox
 - example of image used:
   - `jlesage/firefox:latest`
 
-## The app
+## Requirement
+| Property              | Value                   | Notes                          |
+| --------------------- | ----------------------- | ------------------------------ |
+| **Application Name**  | `mxui`                  | |
+| **Storage Type**      | Ephemeral (Pod storage) | Data is stored in **Ephemeral** container      |
+| **Storage Persistence** | None                    | **Data is lost** on pod restart, reschedule       |
 
-|Key|Value|comment|
-|-|-|-|
-|**Application name**| mxui
-
+   |
 # Manifest
 
 list of the application's manifests

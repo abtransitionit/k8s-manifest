@@ -2,7 +2,7 @@
 [cimreg]: ./cimreg/README.md
 [rancher]: ./rancher/README.md
 [mxui]: ./mxui/README.md
-[Developer Howto]: #-developer-mode
+[Developer Mode]: #-developer-mode
 [End-User Mode]: #-end-user-mode
 [Install Howto]: #how-to-install
 # [←] Helm Charts
@@ -10,7 +10,8 @@
 This **section** lists the `helm` **charts** created and maintained by the organization.
 
 ## Terminology
-- A `helm` **chart** is a set of Kubernetes YAML files used to deploy a **containerized application**.  
+- A `helm` **chart** is a set of Kubernetes YAML files used to deploy **containerized**
+  - **application**, **platform**, **resource**.  depending on your organization's semantic
 - These files are called **manifests**.  
 - A **manifest** describes a Kubernetes resource (e.g., Deployment, Service, ConfigMap) that runs or manages containers.
 
@@ -24,18 +25,19 @@ This **section** lists the `helm` **charts** created and maintained by the organ
 
 
 
-- See each project’s README for specific installation instructions.
+See each project’s README for specific installation instructions.
 
 # How to Install
 This section describes two installation modes depending on your role:
-- [Developer Howto]
+- [Developer Mode]
 - [End-User Mode]
 ## [←][Install Howto] Developer Mode
 Use this mode if you want to **update, build, and publish** Helm charts. Typical tasks include:  
 - Cloning this git repository.  
 - Modifying one or more chart manifests.  
 - Testing it locally.  
-- Building the chart locally.  
+- **Building the chart locally**  
+
 - Pushing the chart to a Helm registry.  
 
 
